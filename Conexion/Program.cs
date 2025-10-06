@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<Conexion.Data.AppDbContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+//scoped solo para db externo y singleton para db en memoria
+
+builder.Services.AddScoped<Conexion.Repositories.IEventRepository, Conexion.Repositories.EventRepository>();
+builder.Services.AddScoped<Conexion.Services.IEventService, Conexion.Services.EventService>();
 
 var app = builder.Build();
 
